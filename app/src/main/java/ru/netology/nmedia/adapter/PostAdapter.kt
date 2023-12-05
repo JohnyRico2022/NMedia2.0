@@ -20,6 +20,7 @@ interface OnInteractionListener {
     fun share(post: Post)
     fun video(post: Post)
     fun actionOnFragment(post: Post)
+    fun actionOnAttachmentFragment(post: Post)
 }
 
 class PostAdapter(
@@ -63,11 +64,11 @@ class PostViewHolder(
             }
             attachment.visibility = View.GONE
 
-           /* if (post.attachment == null) {
+            if (post.attachment == null) {
                 attachment.visibility = View.GONE
             } else {
                 attachment.visibility = View.VISIBLE
-            }*/
+            }
 
             Glide.with(avatar)
                 .load("$baseUrl/avatars/${post.authorAvatar}")
@@ -77,11 +78,10 @@ class PostViewHolder(
                 .timeout(10_000)
                 .into(avatar)
 
-          /*  Glide.with(attachment)
-                .load("$baseUrl/images/${post.attachment?.url}")
+            Glide.with(attachment)
+                .load("$baseUrl/media/${post.attachment?.url}")
                 .timeout(10_000)
                 .into(attachment)
-*/
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
@@ -111,29 +111,21 @@ class PostViewHolder(
             }
             published.setOnClickListener {
                 onInteractionListener.actionOnFragment(post)
-
             }
-            content.setOnClickListener {
-                onInteractionListener.actionOnFragment(post)
-            }
-            author.setOnClickListener {
-                onInteractionListener.actionOnFragment(post)
-            }
-            published.setOnClickListener {
-                onInteractionListener.actionOnFragment(post)
+            attachment.setOnClickListener {
+                onInteractionListener.actionOnAttachmentFragment(post)
             }
         }
     }
 }
+    fun onOptionsItemSelected() {}
 
-fun onOptionsItemSelected() {}
+    class PostDiffCallBack : DiffUtil.ItemCallback<Post>() {
+        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-class PostDiffCallBack : DiffUtil.ItemCallback<Post>() {
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+            return oldItem == newItem
+        }
     }
-
-    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem == newItem
-    }
-}
