@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">NMedia</string>
+    <string name="nmedia">NMedia!</string>
+    <string name="description_post_author_avatar">Post author avatar</string>
+    <string name="description_post_menu">Post menu</string>
+    <string name="post_likes">Post likes</string>
+    <string name="post_share">Post share</string>
+    <string name="post_views">Post eye</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_edit">Edit</string>
+    <string name="post_text">Post text</string>
+    <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="edit_message">Edit Message</string>
+    <string name="add_post">Add new post</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="chooser_share_post">Share</string>
+    <string name="post_author">Me</string>
+    <string name="post_published">Now</string>
+    <string name="no_posts">no_posts</string>
+    <string name="error_loading">error_loading</string>
+    <string name="retry_loading">retry_loading</string>
+    <string name="network_error">Network error!</string>
+    <string name="newer_posts">Newer Posts</string>
+
+</resources>

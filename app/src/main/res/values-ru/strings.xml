@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">НМедиа</string>
+    <string name="nmedia">НМедиа!</string>
+    <string name="description_post_author_avatar">Аватар автора поста</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="post_likes">Иконка лайков поста</string>
+    <string name="post_share">Иконка репост</string>
+    <string name="post_views">Иконка просмотры поста</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="menu_edit">Изменить</string>
+    <string name="post_text">Текст поста</string>
+    <string name="error_empty_content">Содержимое не может быть пустым</string>
+    <string name="edit_message">Изменить сообщение</string>
+    <string name="add_post">Добавление нового поста</string>
+    <string name="ok">OК</string>
+    <string name="cancel">Отмена</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="post_author">Я</string>
+    <string name="post_published">Сейчас</string>
+    <string name="no_posts">нет постов</string>
+    <string name="error_loading">Ошибка загрузки</string>
+    <string name="retry_loading">Перезагрузить</string>
+    <string name="network_error">Ошибка сети!</string>
+    <string name="newer_posts">Свежие записи</string>
+</resources>
