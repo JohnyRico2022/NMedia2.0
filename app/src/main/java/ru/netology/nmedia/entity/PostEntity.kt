@@ -19,7 +19,7 @@ data class PostEntity(
     val likes: Int = 0,
     val showPost: Boolean = true,
     @Embedded
-    val attachment: AttachmentEmbedded?
+    val attachment: AttachmentEmbeddable?
 ) {
     fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, attachment?.toDto())
 

@@ -71,7 +71,7 @@ class FeedFragment : Fragment() {
             override fun actionOnAttachmentFragment(post: Post) {
                 findNavController().navigate(R.id.action_feedFragment_to_attachmentFragment,
                 Bundle().apply {
-                     textArg = post.attachment.url
+                     textArg = post.attachment?.url
                  })
             }
         })

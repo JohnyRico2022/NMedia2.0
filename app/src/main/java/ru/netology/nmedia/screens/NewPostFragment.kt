@@ -4,18 +4,25 @@ import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.screens.FeedFragment.Companion.textArg
+import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -23,6 +30,14 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 class NewPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
+
+    private var fragmentBinding: FragmentNewPostBinding? = null
+
+    companion object {
+        var Bundle.textArg: String? by StringArg
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,6 +45,7 @@ class NewPostFragment : Fragment() {
     ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
 
+        fragmentBinding = binding
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             findNavController().navigateUp()
@@ -48,6 +64,7 @@ class NewPostFragment : Fragment() {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
+
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
                         viewModel.changePhoto(uri, uri?.toFile())
@@ -77,15 +94,49 @@ class NewPostFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
 
+        binding.removeAttachment.setOnClickListener {
+            viewModel.changePhoto(null, null)
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            findNavController().navigateUp()
+        }
+
+        viewModel.photo.observe(viewLifecycleOwner) {
+            if (it?.uri == null) {
+                binding.containerAttachment.visibility = View.GONE
+                return@observe
+            }
+            binding.containerAttachment.visibility = View.VISIBLE
+            binding.imageAttachment.setImageURI(it.uri)
+        }
 
 
+
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_save, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                when (menuItem.itemId) {
+                    R.id.save -> {
+
+                        fragmentBinding?.let {
+                            viewModel.changeContent(it.edit.text.toString())
+                            viewModel.save()
+                            AndroidUtils.hideKeyboard(requireView())
+                        }
+
+                        true
+                    }
+
+                    else -> false
+                }
+        }, viewLifecycleOwner)
 
 
         return binding.root
-    }
-
-    companion object {
-        var Bundle.textArg: String? by StringArg
     }
 }
 
