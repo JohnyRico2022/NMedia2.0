@@ -17,10 +17,11 @@ data class PostEntity(
     val published: String,
     val likedByMe: Boolean,
     val likes: Int = 0,
-    val showPost: Boolean = true
-
+    val showPost: Boolean = true,
+    @Embedded
+    val attachment: AttachmentEmbeddable?
 ) {
-    fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, )
+    fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, attachment?.toDto())
 
     companion object {
         fun fromDto(dto: Post) =
@@ -32,8 +33,22 @@ data class PostEntity(
                 dto.published,
                 dto.likedByMe,
                 dto.likes,
+                showPost = true,
+                AttachmentEmbeddable.fromDto(dto.attachment)
             )
+    }
+}
 
+data class AttachmentEmbeddable(
+    var url: String,
+    var type: AttachmentType,
+) {
+    fun toDto() = Attachment(url, type)
+
+    companion object {
+        fun fromDto(dto: Attachment?) = dto?.let {
+            AttachmentEmbeddable(it.url, it.type)
+        }
     }
 }
 

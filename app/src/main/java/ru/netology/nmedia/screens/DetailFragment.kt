@@ -80,6 +80,9 @@ class DetailFragment : Fragment() {
 
             override fun actionOnFragment(post: Post) {
             }
+
+            override fun actionOnAttachmentFragment(post: Post) {
+            }
         }
 
         val currentPostId = requireArguments().textArg!!.toLong()

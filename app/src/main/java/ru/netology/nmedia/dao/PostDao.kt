@@ -6,8 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.entity.PostEntity
-
-
 @Dao
 interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE showPost = 1 ORDER BY id DESC")

@@ -67,6 +67,13 @@ class FeedFragment : Fragment() {
                             textArg = post.id.toString()
                         })
             }
+
+            override fun actionOnAttachmentFragment(post: Post) {
+                findNavController().navigate(R.id.action_feedFragment_to_attachmentFragment,
+                Bundle().apply {
+                     textArg = post.attachment?.url
+                 })
+            }
         })
 
         binding.recyclerView.adapter = adapter

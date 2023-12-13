@@ -22,5 +22,6 @@
     <string name="retry_loading">retry_loading</string>
     <string name="network_error">Network error!</string>
     <string name="newer_posts">Newer Posts</string>
+    <string name="_1_of_1">1 of 1</string>
 
 </resources>
