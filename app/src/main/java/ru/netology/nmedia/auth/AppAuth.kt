@@ -9,29 +9,40 @@ import java.lang.IllegalStateException
 class AppAuth private constructor(context: Context) {
 
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+    val keyId ="id"
+    val keyToken = "token"
 
-    private val _authState = MutableStateFlow(
-        AuthState(
-            prefs.getLong(KEY_ID, 0L),
-            prefs.getString(KEY_TOKEN, null),
-        )
-    )
-    val authState: StateFlow<AuthState> = _authState.asStateFlow()
+    private val _authStateFlow: MutableStateFlow<AuthState>
+    init {
+        val id = prefs.getLong(keyId, 0)
+        val token = prefs.getString(keyToken, null)
 
+        if (id == 0L || token == null) {
+            _authStateFlow = MutableStateFlow(AuthState())
+            with(prefs.edit()) {
+                clear()
+                apply()
+            }
+        } else {
+            _authStateFlow = MutableStateFlow(AuthState(id, token))
+        }
+    }
+
+    val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
 
     @Synchronized
     fun setAuth(id: Long, token: String) {
-        _authState.value = AuthState(id, token)
+        _authStateFlow.value = AuthState(id, token)
         with(prefs.edit()) {
-            putLong(KEY_ID, id)
-            putString(KEY_TOKEN, token)
+            putLong(keyId, id)
+            putString(keyToken, token)
             commit()
         }
     }
 
     @Synchronized
     fun removeAuth() {
-        _authState.value = AuthState()
+        _authStateFlow.value = AuthState()
         with(prefs.edit()) {
             clear()
             commit()
@@ -39,11 +50,7 @@ class AppAuth private constructor(context: Context) {
     }
 
 
-
     companion object {
-
-        private const val KEY_ID = "id"
-        private const val KEY_TOKEN = "token"
 
         @Volatile
         private var instance: AppAuth? = null

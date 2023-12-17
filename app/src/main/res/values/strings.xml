@@ -23,5 +23,11 @@
     <string name="network_error">Network error!</string>
     <string name="newer_posts">Newer Posts</string>
     <string name="_1_of_1">1 of 1</string>
+    <string name="login">enter login</string>
+    <string name="password">enter password</string>
+    <string name="LogIn">LogIn</string>
+    <string name="enter_to_account">Войдите в аккаунт</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

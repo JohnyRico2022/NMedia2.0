@@ -24,4 +24,8 @@
     <string name="network_error">Ошибка сети!</string>
     <string name="newer_posts">Свежие записи</string>
     <string name="_1_of_1">1 of 1</string>
+    <string name="login">Введите логин</string>
+    <string name="password">Введите пароль</string>
+    <string name="LogIn">Войти</string>
+    <string name="enter_to_account">Войти в аккаунт</string>
 </resources>
