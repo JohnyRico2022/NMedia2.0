@@ -78,4 +78,10 @@
         android:name="ru.netology.nmedia.screens.AuthFragment"
         android:label="fragment_auth"
         tools:layout="@layout/fragment_auth" />
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="ru.netology.nmedia.screens.SignUpFragment"
+        android:label="SignUpFragment"
+        tools:layout="@layout/fragment_sign_up"/>
 </navigation>

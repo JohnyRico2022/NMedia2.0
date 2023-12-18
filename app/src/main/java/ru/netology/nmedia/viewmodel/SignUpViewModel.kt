@@ -12,8 +12,7 @@ import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 
-
-class SignInViewModel(application: Application) : AndroidViewModel(application) {
+class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao)
 
@@ -26,12 +25,12 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
     val authenticated: Boolean
         get() = data.value.id != 0L
 
-    fun signIn(login: String, pass: String) {
+    fun signUp(name: String, login: String, pass: String) {
 
         viewModelScope.launch {
 
             try {
-                repository.singIn(login, pass)
+                repository.signUp(name, login, pass)
                 _dataState.value = FeedModelState(authState = true)
 
             } catch (e: Exception){

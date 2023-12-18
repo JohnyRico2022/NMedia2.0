@@ -18,6 +18,7 @@ interface PostRepository {
     suspend fun saveWithAttachment(post:Post, upload:MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
     suspend fun singIn(login: String, pass: String)
+    suspend fun signUp(name: String, login: String, pass: String)
 }
 
 

@@ -25,7 +25,13 @@
     <string name="newer_posts">Свежие записи</string>
     <string name="_1_of_1">1 of 1</string>
     <string name="login">Введите логин</string>
-    <string name="password">Введите пароль</string>
-    <string name="LogIn">Войти</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="log_in">Войти</string>
     <string name="enter_to_account">Войти в аккаунт</string>
+    <string name="enter_name">Введите имя</string>
+    <string name="repeat_pass">Повторите пароль</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="create_account">Создать аккаунт</string>
+
+
 </resources>

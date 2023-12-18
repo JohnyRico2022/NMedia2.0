@@ -1,5 +1,7 @@
 package ru.netology.nmedia.screens
 
+import android.app.AlertDialog
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -51,23 +53,29 @@ class AppActivity : AppCompatActivity() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.singIn -> {
-
                         findNavController(R.id.container_fragments).navigate(R.id.authFragment)
-                        //                      AppAuth.getInstance().setAuth(5, "x-token")
                         true
                     }
 
                     R.id.singUp -> {
-                        AppAuth.getInstance().setAuth(5, "x-token")
+                        findNavController(R.id.container_fragments).navigate(R.id.signUpFragment)
                         true
                     }
 
                     R.id.singOut -> {
-                        AppAuth.getInstance().removeAuth()
-                        Toast.makeText(applicationContext, "вы вышли из системы", Toast.LENGTH_SHORT).show()
+                        AlertDialog.Builder(this@AppActivity)
+                            .setTitle("Уверены?")
+                            .setPositiveButton("Выйти") { dialogInterface, i ->
+                                AppAuth.getInstance().removeAuth()
+                                Toast.makeText(applicationContext, "Вы вышли из системы", Toast.LENGTH_SHORT).show()
+                            }
+                            .setNegativeButton("Остаться"){ dialogInterface, i ->
+                                return@setNegativeButton
+                            }
+ //                           .create()
+                            .show()
                         true
                     }
-
                     else -> false
                 }
             }
