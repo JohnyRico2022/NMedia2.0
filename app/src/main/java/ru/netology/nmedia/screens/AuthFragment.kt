@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAuthBinding
 import ru.netology.nmedia.viewmodel.SignInViewModel
 
+@AndroidEntryPoint
 class AuthFragment : Fragment() {
 
-    private val viewModel by viewModels<SignInViewModel>()
+    private val viewModel: SignInViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

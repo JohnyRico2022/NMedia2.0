@@ -1,7 +1,6 @@
 package ru.netology.nmedia.screens
 
 import android.app.AlertDialog
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -14,15 +13,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
-import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var appAuth: AppAuth
 
     val viewModel by viewModels<AuthViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,13 +70,12 @@ class AppActivity : AppCompatActivity() {
                         AlertDialog.Builder(this@AppActivity)
                             .setTitle("Уверены?")
                             .setPositiveButton("Выйти") { dialogInterface, i ->
-                                AppAuth.getInstance().removeAuth()
+                                appAuth.removeAuth()
                                 Toast.makeText(applicationContext, "Вы вышли из системы", Toast.LENGTH_SHORT).show()
                             }
                             .setNegativeButton("Остаться"){ dialogInterface, i ->
                                 return@setNegativeButton
                             }
- //                           .create()
                             .show()
                         true
                     }

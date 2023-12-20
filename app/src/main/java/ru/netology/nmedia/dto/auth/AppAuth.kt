@@ -1,18 +1,24 @@
-package ru.netology.nmedia.auth
+package ru.netology.nmedia.dto.auth
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.lang.IllegalStateException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AppAuth private constructor(context: Context) {
-
+@Singleton
+class AppAuth @Inject constructor(
+    @ApplicationContext
+    private val context: Context
+) {
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-    val keyId ="id"
+    val keyId = "id"
     val keyToken = "token"
 
     private val _authStateFlow: MutableStateFlow<AuthState>
+
     init {
         val id = prefs.getLong(keyId, 0)
         val token = prefs.getString(keyToken, null)
@@ -49,21 +55,6 @@ class AppAuth private constructor(context: Context) {
         }
     }
 
-
-    companion object {
-
-        @Volatile
-        private var instance: AppAuth? = null
-
-        fun getInstance() = synchronized(this) {
-            instance
-                ?: throw IllegalStateException("getInstance should be called only after initAuth")
-        }
-
-        fun initAuth(context: Context) = instance ?: synchronized(this) {
-            instance ?: AppAuth(context).also { instance = it }
-        }
-    }
 }
 
 data class AuthState(

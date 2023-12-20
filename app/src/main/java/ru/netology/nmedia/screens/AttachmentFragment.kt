@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAttachmentBinding
 import ru.netology.nmedia.screens.FeedFragment.Companion.textArg
 
+@AndroidEntryPoint
 class AttachmentFragment : Fragment() {
 
     override fun onCreateView(

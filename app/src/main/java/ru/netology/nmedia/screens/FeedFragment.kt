@@ -11,6 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
@@ -20,15 +22,12 @@ import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
 
-    val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
-    val authViewModel: AuthViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,14 +39,13 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(object : OnInteractionListener {
 
             override fun like(post: Post) {
-                if (authViewModel.authenticated){
+                if (authViewModel.authenticated) {
                     if (!post.likedByMe) {
                         viewModel.likeById(post.id)
                     } else {
                         viewModel.disLikeById(post.id)
                     }
-                }
-                else{
+                } else {
                     findNavController().navigate(R.id.authFragment)
                     Toast.makeText(context, "неоходимо войти в систему", Toast.LENGTH_SHORT).show()
                 }
@@ -129,10 +127,9 @@ class FeedFragment : Fragment() {
 
         binding.addPostButton.setOnClickListener {
 
-            if (authViewModel.authenticated){
+            if (authViewModel.authenticated) {
                 findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
-            }
-            else{
+            } else {
                 findNavController().navigate(R.id.authFragment)
                 Toast.makeText(context, "неоходимо войти в систему", Toast.LENGTH_SHORT).show()
             }
