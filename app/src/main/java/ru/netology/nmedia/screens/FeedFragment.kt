@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,11 +17,16 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.StringArg
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
 
     val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
+
+    val authViewModel: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
 
@@ -34,10 +40,16 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(object : OnInteractionListener {
 
             override fun like(post: Post) {
-                if (!post.likedByMe) {
-                    viewModel.likeById(post.id)
-                } else {
-                    viewModel.disLikeById(post.id)
+                if (authViewModel.authenticated){
+                    if (!post.likedByMe) {
+                        viewModel.likeById(post.id)
+                    } else {
+                        viewModel.disLikeById(post.id)
+                    }
+                }
+                else{
+                    findNavController().navigate(R.id.authFragment)
+                    Toast.makeText(context, "неоходимо войти в систему", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -70,9 +82,9 @@ class FeedFragment : Fragment() {
 
             override fun actionOnAttachmentFragment(post: Post) {
                 findNavController().navigate(R.id.action_feedFragment_to_attachmentFragment,
-                Bundle().apply {
-                     textArg = post.attachment?.url
-                 })
+                    Bundle().apply {
+                        textArg = post.attachment?.url
+                    })
             }
         })
 
@@ -96,13 +108,13 @@ class FeedFragment : Fragment() {
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            if(state>0){
+            if (state > 0) {
                 binding.newerPosts.visibility = View.VISIBLE
             }
             println()
         }
 
-        adapter.registerAdapterDataObserver(object  : RecyclerView.AdapterDataObserver(){
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 binding.recyclerView.smoothScrollToPosition(0)
             }
@@ -115,16 +127,23 @@ class FeedFragment : Fragment() {
 
         }
 
-        binding.apply {
+        binding.addPostButton.setOnClickListener {
 
-            addPostButton.setOnClickListener {
+            if (authViewModel.authenticated){
                 findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             }
-
-            swipeRefresh.setOnRefreshListener {
-                viewModel.refreshPosts()
+            else{
+                findNavController().navigate(R.id.authFragment)
+                Toast.makeText(context, "неоходимо войти в систему", Toast.LENGTH_SHORT).show()
             }
+
+
         }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refreshPosts()
+        }
+
 
         return binding.root
     }
