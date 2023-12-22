@@ -31,5 +31,6 @@
     <string name="repeat_pass">Repeat pass</string>
     <string name="sign_up">SignUp</string>
     <string name="create_account">Create account</string>
+    <string name="google_play_unavailable">google play unavailable</string>
 
 </resources>

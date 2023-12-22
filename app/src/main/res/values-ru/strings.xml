@@ -32,6 +32,7 @@
     <string name="repeat_pass">Повторите пароль</string>
     <string name="sign_up">Зарегистрироваться</string>
     <string name="create_account">Создать аккаунт</string>
+    <string name="google_play_unavailable">google play unavailable</string>
 
 
 </resources>
