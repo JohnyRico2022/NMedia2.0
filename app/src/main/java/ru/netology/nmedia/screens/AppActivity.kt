@@ -1,7 +1,9 @@
 package ru.netology.nmedia.screens
 
+import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -14,6 +16,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
@@ -30,6 +34,7 @@ class AppActivity : AppCompatActivity() {
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        requestNotificationsPermission()
 
         // эквивалент livedata, наблюдаем за обновлением меню
         lifecycleScope.launch {
@@ -67,19 +72,57 @@ class AppActivity : AppCompatActivity() {
                             .setTitle("Уверены?")
                             .setPositiveButton("Выйти") { dialogInterface, i ->
                                 AppAuth.getInstance().removeAuth()
-                                Toast.makeText(applicationContext, "Вы вышли из системы", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Вы вышли из системы",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                            .setNegativeButton("Остаться"){ dialogInterface, i ->
+                            .setNegativeButton("Остаться") { dialogInterface, i ->
                                 return@setNegativeButton
                             }
- //                           .create()
+                            //                           .create()
                             .show()
                         true
                     }
+
                     else -> false
                 }
             }
         })
+
+        checkGoogleApiAvailability()
     }
+
+    private fun requestNotificationsPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        requestPermissions(arrayOf(permission), 1)
+    }
+
+
+    private fun checkGoogleApiAvailability() {
+        with(GoogleApiAvailability.getInstance()) {
+            val code = isGooglePlayServicesAvailable(this@AppActivity)
+            if (code == ConnectionResult.SUCCESS) {
+                return@with
+            }
+            if (isUserResolvableError(code)) {
+                getErrorDialog(this@AppActivity, code, 9000)?.show()
+                return
+            }
+            Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
+                .show()
+        }
+        /*   FirebaseMessaging.getInstance().token.addOnSuccessListener {
+               println(it)
+           }*/
+    }
+
 }
 
