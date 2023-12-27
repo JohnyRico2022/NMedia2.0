@@ -32,6 +32,11 @@
     <string name="repeat_pass">Повторите пароль</string>
     <string name="sign_up">Зарегистрироваться</string>
     <string name="create_account">Создать аккаунт</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="channel_remote_name">уведомление с сервера</string>
+    <string name="channel_remote_description">channel remote description</string>
+    <string name="notification_user_liked">Пользователь %1$s поставил лайк посту %2$s</string>
+    <string name="notification_new_post">Новый пост</string>
 
 
 </resources>
