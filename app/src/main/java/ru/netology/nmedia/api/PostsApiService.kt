@@ -11,7 +11,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
-import ru.netology.nmedia.dto.auth.AuthState
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 
@@ -48,4 +48,8 @@ interface PostsApiService {
     @FormUrlEncoded
     @POST("users/registration")
     suspend fun signUpUser(@Field("login") login: String, @Field("pass") pass: String, @Field("name") name: String): Response<AuthState>
+
+    @POST("users/push-tokens")
+    suspend fun sendPushToken(@Body token: PushToken): Response<Unit>
+
 }

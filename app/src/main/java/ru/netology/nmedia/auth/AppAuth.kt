@@ -1,10 +1,16 @@
-package ru.netology.nmedia.dto.auth
+package ru.netology.nmedia.auth
 
 import android.content.Context
+import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import ru.netology.nmedia.api.PostsApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,7 +59,29 @@ class AppAuth @Inject constructor(
             clear()
             commit()
         }
+
     }
+
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val pushToken = PushToken(token ?: FirebaseMessaging.getInstance().token.await())
+                getApiService(context).sendPushToken(pushToken)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getApiService(context: Context): PostsApiService {
+        val hiltEntryPoint = EntryPointAccessors.fromApplication(
+            context,
+            AppAuthEntryPoint::class.java
+        )
+        return hiltEntryPoint.apiService()
+    }
+
 
 }
 

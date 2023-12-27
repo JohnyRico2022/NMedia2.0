@@ -32,5 +32,10 @@
     <string name="sign_up">SignUp</string>
     <string name="create_account">Create account</string>
     <string name="google_play_unavailable">google play unavailable</string>
+    <string name="channel_remote_name">channel remote name</string>
+    <string name="channel_remote_description">channel remote description</string>
+    <string name="notification_user_liked">Пользователь %1$s поставил лайк посту %2$s</string>
+    <string name="notification_new_post">notification new post</string>
+
 
 </resources>
