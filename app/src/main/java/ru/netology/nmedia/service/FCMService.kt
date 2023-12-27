@@ -1,6 +1,7 @@
 package ru.netology.nmedia.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,6 +15,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
 
@@ -23,8 +25,7 @@ class FCMService : FirebaseMessagingService() {
     private val channelId = "remote"
     private val gson = Gson()
 
-
-
+@Inject
     lateinit var auth: AppAuth
 
     override fun onCreate() {
@@ -58,6 +59,7 @@ class FCMService : FirebaseMessagingService() {
         auth.sendPushToken(token)
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun handleLike(content: PushMessage) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentText(
