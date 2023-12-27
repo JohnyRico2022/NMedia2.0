@@ -39,7 +39,8 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        Log.d("FCMService", message.data.toString())
+        Log.d("FCMService", "data: " + message.data.toString())
+        Log.d("FCMService", "content: " + message.data[content].toString())
 
         val myId = AppAuth.getInstance().authStateFlow.value.id
         val recipientId = message.data["recipientId"]?.toLong()
