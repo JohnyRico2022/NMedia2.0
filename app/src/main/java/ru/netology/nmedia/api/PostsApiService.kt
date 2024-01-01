@@ -60,7 +60,4 @@ interface PostsApiService {
     @POST("users/push-tokens")
     suspend fun sendPushToken(@Body token: PushToken): Response<Unit>
 
-    @POST("users/push-tokens")
-    suspend fun sendPushToken(@Body token: PushToken): Response<Unit>
-
 }
