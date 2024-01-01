@@ -9,17 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
-import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.FragmentDetailBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.screens.FeedFragment.Companion.textArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
+@AndroidEntryPoint
 class DetailFragment : Fragment() {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

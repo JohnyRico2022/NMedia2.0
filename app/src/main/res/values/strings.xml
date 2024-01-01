@@ -37,4 +37,5 @@
     <string name="notification_user_liked">Пользователь %1$s поставил лайк посту %2$s</string>
     <string name="notification_new_post">notification new post</string>
 
+
 </resources>

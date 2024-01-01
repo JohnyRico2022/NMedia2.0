@@ -1,5 +1,6 @@
 package ru.netology.nmedia.screens
 
+
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
@@ -18,15 +19,30 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
+    @Inject
+    lateinit var appAuth: AppAuth
 
+    @Inject
+    lateinit var repository: PostRepository
+
+    @Inject
+    lateinit var messageService: FirebaseMessaging
+
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
 
     val viewModel by viewModels<AuthViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +60,25 @@ class AppActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        messageService.token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                println("some stuff happened: ${task.exception}")
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            println(token)
+        }
+
+        checkGoogleApiAvailability()
+
+        requestNotificationsPermission()
+
+
+
+
 
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -71,7 +106,7 @@ class AppActivity : AppCompatActivity() {
                         AlertDialog.Builder(this@AppActivity)
                             .setTitle("Уверены?")
                             .setPositiveButton("Выйти") { dialogInterface, i ->
-                                AppAuth.getInstance().removeAuth()
+                                appAuth.removeAuth()
                                 Toast.makeText(
                                     applicationContext,
                                     "Вы вышли из системы",
@@ -81,7 +116,6 @@ class AppActivity : AppCompatActivity() {
                             .setNegativeButton("Остаться") { dialogInterface, i ->
                                 return@setNegativeButton
                             }
-                            //                           .create()
                             .show()
                         true
                     }
@@ -90,8 +124,25 @@ class AppActivity : AppCompatActivity() {
                 }
             }
         })
+    }
 
-        checkGoogleApiAvailability()
+    fun checkGoogleApiAvailability() {
+        with(googleApiAvailability) {
+            val code = isGooglePlayServicesAvailable(this@AppActivity)
+            if (code == ConnectionResult.SUCCESS) {
+                return@with
+            }
+            if (isUserResolvableError(code)) {
+                getErrorDialog(this@AppActivity, code, 9000)?.show()
+                return
+            }
+            Toast.makeText(
+                this@AppActivity,
+                R.string.google_play_unavailable,
+                Toast.LENGTH_LONG
+            )
+                .show()
+        }
     }
 
     private fun requestNotificationsPermission() {
@@ -103,25 +154,6 @@ class AppActivity : AppCompatActivity() {
             return
         }
         requestPermissions(arrayOf(permission), 1)
-    }
-
-
-    private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
-            val code = isGooglePlayServicesAvailable(this@AppActivity)
-            if (code == ConnectionResult.SUCCESS) {
-                return@with
-            }
-            if (isUserResolvableError(code)) {
-                getErrorDialog(this@AppActivity, code, 9000)?.show()
-                return
-            }
-            Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
-                .show()
-        }
-        /*   FirebaseMessaging.getInstance().token.addOnSuccessListener {
-               println(it)
-           }*/
     }
 
 }

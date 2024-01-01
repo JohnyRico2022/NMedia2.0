@@ -1,13 +1,13 @@
 package ru.netology.nmedia.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -15,14 +15,18 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
 
 class FCMService : FirebaseMessagingService() {
-    private val action = "action"
+ //   private val action = "action"
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
+
+@Inject
+    lateinit var auth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -39,25 +43,23 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        Log.d("FCMService", "data: " + message.data.toString())
-        Log.d("FCMService", "content: " + message.data[content].toString())
 
-        val myId = AppAuth.getInstance().authStateFlow.value.id
+        val myId = auth.authStateFlow.value.id
         val recipientId = message.data["recipientId"]?.toLong()
 
 
         when (recipientId) {
-            0L -> AppAuth.getInstance().sendPushToken()
             myId, null -> handleLike(gson.fromJson(message.data[content], PushMessage::class.java))
-            else -> AppAuth.getInstance().sendPushToken()
+            else -> auth.sendPushToken()
         }
 
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+        auth.sendPushToken(token)
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun handleLike(content: PushMessage) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentText(
@@ -86,17 +88,6 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 }
-
-/*enum class Action {
-    LIKE,
-}
-
-data class Like(
-    val userId: Long,
-    val userName: String,
-    val postId: Long,
-    val postAuthor: String,
-)*/
 
 data class PushMessage(
     val recipientId: Long?,
