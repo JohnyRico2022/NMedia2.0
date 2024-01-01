@@ -43,6 +43,8 @@ class AppAuth @Inject constructor(
         } else {
             _authStateFlow = MutableStateFlow(AuthState(id, token))
         }
+
+        sendPushToken()
     }
 
     val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
@@ -61,6 +63,7 @@ class AppAuth @Inject constructor(
             putString(keyToken, token)
             commit()
         }
+        sendPushToken()
     }
 
     @Synchronized
@@ -70,7 +73,7 @@ class AppAuth @Inject constructor(
             clear()
             commit()
         }
-
+        
     }
 
     fun sendPushToken(token: String? = null) {

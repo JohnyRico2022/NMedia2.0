@@ -50,6 +50,7 @@ class AppActivity : AppCompatActivity() {
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        requestNotificationsPermission()
 
         // эквивалент livedata, наблюдаем за обновлением меню
         lifecycleScope.launch {
