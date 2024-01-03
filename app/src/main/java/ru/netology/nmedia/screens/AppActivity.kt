@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
-import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import javax.inject.Inject
 
@@ -34,9 +33,6 @@ import javax.inject.Inject
 class AppActivity : AppCompatActivity() {
     @Inject
     lateinit var appAuth: AppAuth
-
-    @Inject
-    lateinit var repository: PostRepository
 
     @Inject
     lateinit var messageService: FirebaseMessaging
@@ -75,9 +71,6 @@ class AppActivity : AppCompatActivity() {
         checkGoogleApiAvailability()
 
         requestNotificationsPermission()
-
-
-
 
 
         addMenuProvider(object : MenuProvider {
@@ -155,6 +148,5 @@ class AppActivity : AppCompatActivity() {
         }
         requestPermissions(arrayOf(permission), 1)
     }
-
 }
 

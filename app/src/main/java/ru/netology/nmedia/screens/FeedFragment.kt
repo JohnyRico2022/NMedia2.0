@@ -8,11 +8,15 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.observeOn
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
@@ -25,10 +29,12 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val viewModel: PostViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -98,19 +104,20 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-
-            adapter.submitList(state.posts) {
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
             }
-            binding.empty.isVisible = state.empty
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+
+
+        /*viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             if (state > 0) {
                 binding.newerPosts.visibility = View.VISIBLE
             }
             println()
-        }
+        }*/
 
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -118,27 +125,32 @@ class FeedFragment : Fragment() {
             }
         })
 
-        binding.newerPosts.setOnClickListener {
-            viewModel.makePostShowed()
-            viewModel.getUnreadPosts()
-            binding.newerPosts.visibility = View.GONE
+        /*  binding.newerPosts.setOnClickListener {
+              viewModel.makePostShowed()
+              viewModel.getUnreadPosts()
+              binding.newerPosts.visibility = View.GONE
 
-        }
+          }*/
 
         binding.addPostButton.setOnClickListener {
-
             if (authViewModel.authenticated) {
                 findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             } else {
                 findNavController().navigate(R.id.authFragment)
                 Toast.makeText(context, "неоходимо войти в систему", Toast.LENGTH_SHORT).show()
             }
+        }
 
-
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+                        || it.append is LoadState.Loading
+                        || it.prepend is LoadState.Loading
+            }
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.refreshPosts()
+            adapter.refresh()
         }
 
 
