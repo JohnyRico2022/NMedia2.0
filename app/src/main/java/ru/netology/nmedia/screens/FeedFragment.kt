@@ -149,6 +149,8 @@ class FeedFragment : Fragment() {
             }
         }
 
+        authViewModel.data.observe(viewLifecycleOwner) { adapter.refresh() }
+
         binding.swipeRefresh.setOnRefreshListener {
             adapter.refresh()
         }
