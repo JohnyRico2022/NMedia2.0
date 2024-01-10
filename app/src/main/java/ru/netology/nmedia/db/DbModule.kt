@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class DbModule {
-
     @Singleton
     @Provides
     fun provideDb(
@@ -23,9 +22,9 @@ class DbModule {
         .fallbackToDestructiveMigration()
         .build()
 
-    @Provides
+   /* @Provides
     fun providePostDao(
         appDb: AppDb
-    ): PostDao = appDb.postDao
+    ): PostDao = appDb.postDao*/
 
 }
