@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingState
 import androidx.paging.map
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -42,9 +43,12 @@ class PostRepositoryImpl @Inject constructor(
     appDb: AppDb
 ) : PostRepository {
 
+    @Inject
+    lateinit var auth: AppAuth
+
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<Post>> = Pager(
-        config = PagingConfig(pageSize = 8, enablePlaceholders = false),
+        config = PagingConfig(pageSize = 15, enablePlaceholders = false),
         pagingSourceFactory = { dao.getPagingSource() },
         remoteMediator = PostRemoteMediator(
             apiService = apiService,
@@ -52,8 +56,7 @@ class PostRepositoryImpl @Inject constructor(
             postRemoteKeyDao = postRemoteKeyDao,
             appDb = appDb
         )
-    ).flow
-        .map { it.map(PostEntity::toDto) }
+    ).flow.map { it.map(PostEntity::toDto) }
 
 
     override fun getNewer(id: Long): Flow<Int> = flow {
@@ -63,7 +66,6 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(body.toEntity().map { it.copy(showPost = false) })
             emit(body.size)
@@ -72,10 +74,9 @@ class PostRepositoryImpl @Inject constructor(
         .catch { it.printStackTrace() }
         .flowOn(Dispatchers.Default)
 
-    @Inject
-    lateinit var auth: AppAuth
 
     override suspend fun getAll() {
+
         dao.makePostShowed()
         dao.getAll()
 

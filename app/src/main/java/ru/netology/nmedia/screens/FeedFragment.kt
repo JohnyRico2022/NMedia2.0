@@ -112,7 +112,7 @@ class FeedFragment : Fragment() {
 
 
 
-        /*viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+       /* viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             if (state > 0) {
                 binding.newerPosts.visibility = View.VISIBLE
             }
@@ -125,12 +125,12 @@ class FeedFragment : Fragment() {
             }
         })
 
-        /*  binding.newerPosts.setOnClickListener {
+          binding.newerPosts.setOnClickListener {
               viewModel.makePostShowed()
               viewModel.getUnreadPosts()
               binding.newerPosts.visibility = View.GONE
 
-          }*/
+          }
 
         binding.addPostButton.setOnClickListener {
             if (authViewModel.authenticated) {

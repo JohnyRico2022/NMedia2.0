@@ -17,7 +17,7 @@ import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.PushToken
 
-private const val BASE_URL = "http://10.0.2.2:9999/api/slow/"
+//  private const val BASE_URL = "http://10.0.2.2:9999/api/slow/"
 
 interface PostsApiService {
 
