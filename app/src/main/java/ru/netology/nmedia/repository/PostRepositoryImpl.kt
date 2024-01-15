@@ -59,7 +59,7 @@ class PostRepositoryImpl @Inject constructor(
     ).flow.map { it.map(PostEntity::toDto) }
 
 
-    override fun getNewer(id: Long): Flow<Int> = flow {
+    /*override fun getNewer(id: Long): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
             val response = apiService.getNewer(id)
@@ -72,10 +72,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
         .catch { it.printStackTrace() }
-        .flowOn(Dispatchers.Default)
+        .flowOn(Dispatchers.Default)*/
 
-
-    override suspend fun getAll() {
+   /* override suspend fun getAll() {
 
         dao.makePostShowed()
         dao.getAll()
@@ -94,7 +93,7 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw UnknownError
         }
-    }
+    }*/
 
     override suspend fun getUnreadPosts() {
         dao.getUnreadPosts()
