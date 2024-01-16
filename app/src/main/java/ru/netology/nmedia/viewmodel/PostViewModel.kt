@@ -3,17 +3,16 @@ package ru.netology.nmedia.viewmodel
 import android.net.Uri
 import androidx.lifecycle.*
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModelState
@@ -45,27 +44,28 @@ class PostViewModel @Inject constructor(
     appAuth: AppAuth
 ) : ViewModel() {
 
+    private val cached = repository.data.cachedIn(viewModelScope)
 
-    val data: Flow<PagingData<Post>> = appAuth.authStateFlow
-        .flatMapLatest {auth ->
-            repository.data.map { posts ->
-                    posts.map { it.copy(ownedByMe = auth.id == it.authorId) }
+    val data: Flow<PagingData<FeedItem>> = appAuth.authStateFlow
+        .flatMapLatest { (myId, _) ->
+            cached.map { pagindData ->
+                pagindData.map { post ->
+                    if (post is Post) {
+                        post.copy(ownedByMe = post.authorId == myId)
+                    } else {
+                        post
+                    }
+                }
             }
         }
-        .flowOn(Dispatchers.Default)
 
 
-    /*val newerCount = data.switchMap {
-        repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
-            .asLiveData(Dispatchers.Default, 100)
-    }*/
-
-    private val _dataState = MutableLiveData<FeedModelState>()
+    val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val edited = MutableLiveData(emptyPost)
-    private val _postCreated = SingleLiveEvent<Unit>()
+    val edited = MutableLiveData(emptyPost)
+    val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
@@ -80,7 +80,7 @@ class PostViewModel @Inject constructor(
     fun load() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
- //           repository.getAll()
+            //           repository.getAll()
             _dataState.value = FeedModelState()
 
         } catch (e: Exception) {
@@ -114,7 +114,7 @@ class PostViewModel @Inject constructor(
     fun refreshPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(refreshing = true)
-  //          repository.getAll()
+            //          repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
@@ -126,7 +126,7 @@ class PostViewModel @Inject constructor(
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when(_photo.value) {
+                    when (_photo.value) {
                         noPhoto -> repository.save(it)
                         else -> _photo.value?.file?.let { file ->
                             repository.saveWithAttachment(it, MediaUpload(file))
@@ -197,3 +197,5 @@ class PostViewModel @Inject constructor(
         edited.value = post
     }
 }
+
+
