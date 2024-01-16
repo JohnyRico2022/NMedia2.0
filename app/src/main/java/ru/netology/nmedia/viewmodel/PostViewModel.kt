@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.MediaUpload
@@ -54,7 +55,7 @@ class PostViewModel @Inject constructor(
         .flowOn(Dispatchers.Default)
 
 
-   /* val newerCount = data.switchMap {
+    /*val newerCount = data.switchMap {
         repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
             .asLiveData(Dispatchers.Default, 100)
     }*/
@@ -79,7 +80,7 @@ class PostViewModel @Inject constructor(
     fun load() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
-            repository.getAll()
+ //           repository.getAll()
             _dataState.value = FeedModelState()
 
         } catch (e: Exception) {
@@ -113,7 +114,7 @@ class PostViewModel @Inject constructor(
     fun refreshPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(refreshing = true)
-            repository.getAll()
+  //          repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)

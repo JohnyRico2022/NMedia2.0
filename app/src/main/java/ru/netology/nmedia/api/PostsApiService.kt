@@ -17,18 +17,18 @@ import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.PushToken
 
-private const val BASE_URL = "http://10.0.2.2:9999/api/slow/"
+//  private const val BASE_URL = "http://10.0.2.2:9999/api/slow/"
 
 interface PostsApiService {
 
-    @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
+    /*@GET("posts")
+   suspend fun getAll(): Response<List<Post>>*/
 
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count : Int): Response<List<Post>>
 
-    @GET("posts/{id}/newer")
-    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+    /*@GET("posts/{id}/newer")
+    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>*/
 
     @GET("posts/{id}/before")
     suspend fun getBefore(@Path("id") id: Long, @Query("count") count : Int): Response<List<Post>>
