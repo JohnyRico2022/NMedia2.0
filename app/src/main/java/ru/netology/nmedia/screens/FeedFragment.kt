@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.observeOn
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.StringArg
@@ -92,7 +93,10 @@ class FeedFragment : Fragment() {
             }
         })
 
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() },
+        )
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
@@ -105,19 +109,9 @@ class FeedFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
-                adapter.submitData(it)
-            }
+            viewModel.data.collectLatest(adapter::submitData)
+            //              adapter.submitData(it)
         }
-
-
-
-       /* viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            if (state > 0) {
-                binding.newerPosts.visibility = View.VISIBLE
-            }
-            println()
-        }*/
 
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -125,12 +119,11 @@ class FeedFragment : Fragment() {
             }
         })
 
-          binding.newerPosts.setOnClickListener {
-              viewModel.makePostShowed()
-              viewModel.getUnreadPosts()
-              binding.newerPosts.visibility = View.GONE
-
-          }
+        binding.newerPosts.setOnClickListener {
+            viewModel.makePostShowed()
+            viewModel.getUnreadPosts()
+            binding.newerPosts.visibility = View.GONE
+        }
 
         binding.addPostButton.setOnClickListener {
             if (authViewModel.authenticated) {
